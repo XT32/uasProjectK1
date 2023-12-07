@@ -1,7 +1,7 @@
 # Project pembuatan analisis untuk pengambilan keputusan pada pimpinan sebuah SPBU
-Dibuat untuk memenuhi tugas akhir pemprograman dasar
-Tujuan dibuatnya ialah untuk melihat perkembangan SPBU khususnya SPBU yang baru dibuka
-Untuk fitur sendiri, memiliki panel login, admin, dan user atau yang menjaga dispenser SPBU.
+*Dibuat untuk memenuhi tugas akhir pemprograman dasar
+*Tujuan dibuatnya ialah untuk melihat perkembangan SPBU khususnya SPBU yang baru dibuka
+*Untuk fitur sendiri, memiliki panel login, admin, dan user atau yang menjaga dispenser SPBU.
 
 ## Fitur admin
 * Memberikan tambahan bensin masuk
