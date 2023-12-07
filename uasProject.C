@@ -36,50 +36,50 @@ void validateInput(const char *message, char *input, int maxLength) {
 }
 
 // Menu pengguna
-// void userMenu(int userIndex) {
-//     int choice;
-//     do {
-//         printf("\nMenu Pengguna:\n");
-//         printf("1. Update Pendapatan\n");
-//         printf("2. Lihat Data\n");
-//         printf("3. Kembali\n");
+void userMenu(int userIndex) {
+    int choice;
+    do {
+        printf("\nMenu Pengguna:\n");
+        printf("1. Update Pendapatan\n");
+        printf("2. Lihat Data\n");
+        printf("3. Kembali\n");
 
-//         printf("Pilihan: ");
-//         scanf("%d", &choice);
-//         while (getchar() != '\n');
+        printf("Pilihan: ");
+        scanf("%d", &choice);
+        while (getchar() != '\n');
 
-//         switch (choice) {
-//             case 1: {
-//                 int week;
-//                 printf("Masukkan minggu yang ingin diupdate: ");
-//                 scanf("%d", &week);
-//                 if (week > MAX_WEEKS || week <= 0) {
-//                     printf("Data untuk minggu %d belum ada.\n", week);
-//                     printf("Masukkan pendapatan baru untuk minggu %d: ", week);
-//                     scanf("%d", &users[userIndex].weeklyBensin[week - 1][0]);
-//                     printf("Pendapatan untuk minggu %d berhasil diperbarui!\n", week);
-//                     if (week > users[userIndex].weeksStored) {
-//                         users[userIndex].weeksStored = week;
-//                     }
-//                 } else {
-//                     printf("Data untuk minggu %d sudah ada.\n", week);
-//                     printf("Pendapatan untuk minggu %d: %d\n", week, users[userIndex].weeklyBensin[week - 1][0]);
-//                 }
-//                 break;
-//             }
-//             case 2:
-//                 printf("=== Data Pengguna ===\n");
-//                 displayUserData(userIndex);
-//                 break;
-//             case 3:
-//                 printf("Kembali ke menu sebelumnya.\n");
-//                 break;
-//             default:
-//                 printf("Pilihan tidak valid!\n");
-//                 break;
-//         }
-//     } while (choice != 3);
-// }
+        switch (choice) {
+            case 1: {
+                int week;
+                printf("Masukkan minggu yang ingin diupdate: ");
+                scanf("%d", &week);
+                if (week > MAX_WEEKS || week <= 0) {
+                    printf("Data untuk minggu %d belum ada.\n", week);
+                    printf("Masukkan pendapatan baru untuk minggu %d: ", week);
+                    scanf("%d", &users[userIndex].weeklyBensin[week - 1][0]);
+                    printf("Pendapatan untuk minggu %d berhasil diperbarui!\n", week);
+                    if (week > users[userIndex].weeksStored) {
+                        users[userIndex].weeksStored = week;
+                    }
+                } else {
+                    printf("Data untuk minggu %d sudah ada.\n", week);
+                    printf("Pendapatan untuk minggu %d: %d\n", week, users[userIndex].weeklyBensin[week - 1][0]);
+                }
+                break;
+            }
+            case 2:
+                printf("=== Data Pengguna ===\n");
+                displayUserData(userIndex);
+                break;
+            case 3:
+                printf("Kembali ke menu sebelumnya.\n");
+                break;
+            default:
+                printf("Pilihan tidak valid!\n");
+                break;
+        }
+    } while (choice != 3);
+}
 
 // Tampilan untuk pengguna
 void displayUserData(int userIndex) {
