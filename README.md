@@ -4,7 +4,7 @@
 * Untuk fitur sendiri, memiliki panel login, admin, dan user atau yang menjaga dispenser SPBU.
 
 ## Fitur admin
-* Memberikan tambahan bensin masuk
+* Memberikan tambahan bensin masuk atau stock bensin untuk di masukkan pada penghitungan user
 * Melihat data yang telah diinput user
 * Exit
 
