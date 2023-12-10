@@ -88,7 +88,13 @@ void updateUser(int userIndex) {
     printf("Tekan Enter untuk melanjutkan...");
     getchar();
 }
+float uangMasuk = 0;
+float bensinKeluar;
 
+void beliBensin(float rupiah){
+    uangMasuk= uangMasuk + rupiah;
+    bensinKeluar = rupiah/(float)15000;
+}
 int main() {
     int choice;
     int userIndex;
