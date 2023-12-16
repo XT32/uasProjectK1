@@ -12,3 +12,4 @@
 * Mendata pemasukan per minggu
 * Melihat data hasil inputan
 * Sisa bahan bakar yang berada di tangki
+* Hasil mingguan dan harian
