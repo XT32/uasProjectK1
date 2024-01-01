@@ -12,7 +12,8 @@
 #define HARGA_PERTALITE 10000
 #define HARGA_PERTAMAX 15000
 #define HARGA_SOLAR 7000
-struct Akun {
+struct Akun 
+{
   char username[USERNAME_LENGTH];
   char password[PASSWORD_LENGTH];
   char role[10];
