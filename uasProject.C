@@ -1,10 +1,160 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
-#define MAX_USERS 10
+#define MAX_USERS 4
 #define USERNAME_LENGTH 20
-#define PASSWORD_LENGTH 30
+#define PASSWORD_LENGTH 20
+#define PERTALITE 1
+#define PERTAMAX 2
+#define SOLAR 3
+#define HARGA_PERTALITE 10000
+#define HARGA_PERTAMAX 15000
+#define HARGA_SOLAR 7000
+
+struct Akun {
+  char username[USERNAME_LENGTH];
+  char password[PASSWORD_LENGTH];
+  char role[10];
+  int jenisUser;      // Untuk menyimpan jenis user pada menu user
+  int chosenFuelType; // 1 for Pertalite, 2 for Pertamax, 3 for Solar
+  float stokBensin;    // Added field to store fuel stock
+};
+
+struct Akun users[MAX_USERS];
+int userCount = 0; // Inisialisasi jumlah pengguna
+
+float mingguanPendapatan[4] = {0.0};
+float literPertalite[28] = {0.0};
+float literPertamax[28] = {0.0}; // Tambahkan array untuk Pertamax
+float literSolar[28] = {0.0};    // Tambahkan array untuk Solar
+float stokPertalite[4] = {0.0};  // Tambahkan array untuk stok Pertalite
+float stokPertamax[4] = {0.0};   // Tambahkan array untuk stok Pertamax
+float stokSolar[4] = {0.0};      // Tambahkan array untuk stok Solar
+
+void clearScreen() {
+#ifdef _WIN32
+  system("cls");
+#else
+  system("clear");
+#endif
+}
+
+int findUserIndex(const char *username) {
+  for (int i = 0; i < MAX_USERS; ++i) {
+    if (strcmp(users[i].username, username) == 0) {
+      return i;
+    }
+  }
+  return -1; // User not found
+}
+
+void displayBensin(struct Akun *user, float *literBensin, float hargaBensin, const char *jenisBensin, float *stokBensin);
+void dataBensin(struct Akun *user, float *literBensin, float hargaBensin, float *stokBensin, const char *jenisBensin);
+void refillSingleFuelType(float *literBensin, int userIndex);
+
+void refillFuelStockUser(struct Akun *user) {
+    refillFuelStock(user);
+}
+
+void refillFuelStock(struct Akun *user) {
+  switch (user->chosenFuelType) {
+    case PERTALITE:
+      refillSingleFuelType(stokPertalite, user - users);
+      break;
+    case PERTAMAX:
+      refillSingleFuelType(stokPertamax, user - users);
+      break;
+    case SOLAR:
+      refillSingleFuelType(stokSolar, user - users);
+      break;
+    default:
+      printf("Jenis bensin tidak valid.\n");
+  }
+}
+
+void refillSingleFuelType(float *stokBensin, int userIndex) {
+    printf("Masukkan jumlah liter bensin yang akan diisi ulang: ");
+    float refillAmount;
+    scanf("%f", &refillAmount);
+
+    // Update stokBensin array for all weeks
+    for (int i = 0; i < 4; ++i) {
+        stokBensin[i] += refillAmount;
+    }
+
+    printf("Stok bensin berhasil diisi ulang untuk user %d.\n", userIndex);
+}
+
+int findEmptyUserSlot() {
+  for (int i = 0; i < MAX_USERS; ++i) {
+    if (strlen(users[i].username) == 0) {
+      return i;
+    }
+  }
+  return -1; // No empty slot found
+}
+
+int signIn() {
+  char username[USERNAME_LENGTH];
+  char password[PASSWORD_LENGTH];
+
+  printf("=== Sign In ===\n");
+  printf("Username: ");
+  scanf("%s", username);
+  printf("Password: ");
+  scanf("%s", password);
+
+  for (int i = 0; i < userCount; ++i) {
+    if (strcmp(users[i].username, username) == 0 &&
+        strcmp(users[i].password, password) == 0) {
+      if (strcmp(users[i].role, "admin") == 0) {
+        printf("Login berhasil sebagai Admin: %s.\n", username);
+        return i; // Mengembalikan indeks pengguna yang berhasil login
+      } else {
+        printf("Login berhasil sebagai User: %s.\n", username);
+        users[i].jenisUser = 1; // Set to 1 when the user signs in
+        return i; // Mengembalikan indeks pengguna yang berhasil login
+      }
+    }
+  }
+
+  printf("Sign in gagal. Username atau password salah.\n");
+  return -1; // Mengembalikan -1 jika login gagal
+}
+
+int handleSignInFailure(struct Akun users[], int userCount) {
+  char username[USERNAME_LENGTH];
+  char password[PASSWORD_LENGTH];
+
+  printf("Sign in gagal. Username atau password salah.\n");
+  int choice;
+  printf("1. Kembali ke menu utama\n");
+  printf("Pilih opsi (1): ");
+  scanf("%d", &choice);
+
+  if (choice != 1) {
+    printf("Pilihan tidak valid.\n");
+    return -1; // Kembalikan -1 jika pilihan tidak valid
+  }
+
+  printf("Masukkan username: ");
+  scanf("%s", username);
+  printf("Masukkan password: ");
+  scanf("%s", password);
+
+  for (int i = 0; i < userCount; ++i) {
+    if (strcmp(users[i].username, username) == 0 &&
+        strcmp(users[i].password, password) == 0) {
+      printf("Login berhasil sebagai %s.\n", username);
+      return i; // Kembalikan indeks pengguna yang berhasil login
+    }
+  }
+
+  printf("Username atau password salah.\n");
+  return -1; // Kembalikan -1 jika login gagal
+}
 
 void menuAdmin(struct Akun adminUser, struct Akun users[]) {
     int adminChoice;
