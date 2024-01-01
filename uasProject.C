@@ -6,127 +6,102 @@
 #define USERNAME_LENGTH 20
 #define PASSWORD_LENGTH 30
 
-struct User {
-    char username[USERNAME_LENGTH];
-    char password[PASSWORD_LENGTH];
-    
-    int totalBensin;
-    int totalUang;
-};
+void menuAdmin(struct Akun adminUser, struct Akun users[]) {
+    int adminChoice;
+    while (1) {
+        printf("=== Admin Menu ===\n");
+        printf("1. Mengisi Ulang Stok Bensin\n");
+        printf("2. Melihat Seluruh Data\n");
+        printf("3. Menampilkan Daftar Pengguna\n");
+        printf("4. Kembali ke Menu Utama\n");
+        printf("==================\n");
+        printf("Pilih opsi (1-4): ");
+        scanf("%d", &adminChoice);
 
-struct User users[MAX_USERS];
-int userCount = 0;
-
-void validateInput(const char *message, char *input, int maxLength) {
-    printf("%s: ", message);
-    fgets(input, maxLength, stdin);
-    input[strcspn(input, "\n")] = '\0';
-}
-
-void adminPage() {
-    printf("Daftar User dan Laporan:\n");
-    for (int i = 0; i < userCount; i++) {
-        printf("User %d:\n", i + 1);
-        printf("Username: %s\n", users[i].username);
-        printf("Total Bensin Keluar: %d\n", users[i].totalBensin);
-        printf("Total Uang Masuk: %d\n", users[i].totalUang);
-    }
-}
-
-void signUp() {
-    if (userCount < MAX_USERS) {
-        struct User newUser;
-
-        validateInput("Masukkan username", newUser.username, USERNAME_LENGTH);
-        validateInput("Masukkan password", newUser.password, PASSWORD_LENGTH);
-
-        users[userCount] = newUser;
-        userCount++;
-
-        printf("Sign up berhasil!\n\n");
-    } else {
-        printf("Maksimum user telah tercapai.\n\n");
-    }
-}
-
-int signIn() {
-    char username[USERNAME_LENGTH];
-    char password[PASSWORD_LENGTH];
-
-    validateInput("Masukkan username", username, USERNAME_LENGTH);
-    validateInput("Masukkan password", password, PASSWORD_LENGTH);
-
-    if (strcmp(username, "admin") == 0 && strcmp(password, "admin") == 0) {
-        printf("Welcome admin\n");
-        adminPage();
-        printf("Tekan Enter untuk melanjutkan...");
-        getchar();
-        return 1;
-    }
-
-    for (int i = 0; i < userCount; i++) {
-        if (strcmp(username, users[i].username) == 0 && strcmp(password, users[i].password) == 0) {
-            printf("Login berhasil!\n\n");
-            return i;
-        }
-    }
-
-    printf("Username atau password salah!\n\n");
-    printf("Tekan Enter untuk melanjutkan...");
-    getchar();
-    return -1;
-}
-
-void updateUser(int userIndex) {
-    printf("Masukkan total bensin: ");
-    scanf("%d", &users[userIndex].totalBensin);
-
-    printf("Masukkan total uang: ");
-    scanf("%d", &users[userIndex].totalUang);
-
-    printf("Data berhasil diperbarui!\n\n");
-    printf("Tekan Enter untuk melanjutkan...");
-    getchar();
-}
-float uangMasuk = 0;
-float bensinKeluar;
-
-void beliBensin(float rupiah){
-    uangMasuk= uangMasuk + rupiah;
-    bensinKeluar = rupiah/(float)15000;
-}
-int main() {
-    int choice;
-    int userIndex;
-
-    do {
-        printf("Menu:\n");
-        printf("1. Sign Up\n");
-        printf("2. Sign In\n");
-        printf("3. Exit\n");
-
-        printf("Pilihan: ");
-        scanf("%d", &choice);
-        while (getchar() != '\n');
-
-        switch (choice) {
+        switch (adminChoice) {
             case 1:
-                signUp();
-                break;
-            case 2:
-                userIndex = signIn();
-                if (userIndex != -1 && userIndex != 1) {
-                    updateUser(userIndex);
+                clearScreen();
+                viewUserList();
+                int userChoice;
+                printf("Pilih pengguna (1-%d): ", userCount - 1);
+                scanf("%d", &userChoice);
+                if (userChoice >= 1 && userChoice < userCount) {
+                    refillFuelStockUser(&users[userChoice]);
+                } else {
+                    printf("Pilihan pengguna tidak valid.\n");
                 }
                 break;
+            case 2:
+                clearScreen();
+                viewAllData(adminUser);
+                break;
             case 3:
-                exit(0);
+                clearScreen();
+                viewUserList();
                 break;
+            case 4:
+                printf("Kembali ke Menu Utama.\n");
+                return;
             default:
-                printf("Mohon pilih angka yang sesuai dengan menu!\n\n");
-                break;
+                printf("Opsi tidak valid. Silakan pilih kembali.\n");
         }
-    } while (choice != 3);
+    }
+}
 
-    return 0;
+int main() {
+strcpy(users[0].username, "admin");
+strcpy(users[0].password, "adminpass");
+strcpy(users[0].role, "admin");
+
+strcpy(users[1].username, "user1");
+strcpy(users[1].password, "pass1");
+users[1].chosenFuelType = PERTALITE;
+
+strcpy(users[2].username, "user2");
+strcpy(users[2].password, "pass2");
+users[2].chosenFuelType = PERTAMAX;
+
+strcpy(users[3].username, "user3");
+strcpy(users[3].password, "pass3");
+users[3].chosenFuelType = SOLAR;
+
+  userCount = 4;
+  int userIndex;
+  int choice;
+
+  do {
+    printf("Menu:\n");
+    printf("1. Sign In\n");
+    printf("2. Exit\n");
+
+    printf("Pilihan: ");
+    scanf("%d", &choice);
+    while (getchar() != '\n')
+      ;
+
+    switch (choice) {
+    case 1:
+      userIndex = signIn();
+      if (userIndex != -1) {
+        if (strcmp(users[userIndex].role, "admin") == 0) {
+          menuAdmin(users[userIndex], users);
+        } else {
+          // Menu untuk user biasa
+        if (users[userIndex].chosenFuelType == PERTALITE) {
+    dataBensin(&users[userIndex], literPertalite, HARGA_PERTALITE, stokPertalite, "Pertalite");
+} else if (users[userIndex].chosenFuelType == PERTAMAX) {
+    dataBensin(&users[userIndex], literPertamax, HARGA_PERTAMAX, stokPertamax, "Pertamax");
+} else if (users[userIndex].chosenFuelType == SOLAR) {
+    dataBensin(&users[userIndex], literSolar, HARGA_SOLAR, stokSolar, "Solar");
+} else {
+    printf("Jenis bensin tidak valid.\n");
+}
+
+        }
+      }
+      break;
+    }
+  } while (1);
+
+  return 0;
 }
