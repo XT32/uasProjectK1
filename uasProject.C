@@ -156,6 +156,137 @@ int handleSignInFailure(struct Akun users[], int userCount) {
   return -1; // Kembalikan -1 jika login gagal
 }
 
+void dataBensin(struct Akun *user, float *literBensin, float hargaBensin, float *stokBensin, const char *jenisBensin){
+  int continueInput = 1;
+  int hari;
+  float harianPendapatan[28] = {0.0}; // 4 minggu x 7 hari
+  float totalLiterTerjual = 0.0;
+
+  while (1) {
+    int minggu;
+    float pendapatanMingguan = 0.0;
+
+    printf("===== Pilih Ingin Memasukkan Penghasilan Minggu Ke Berapa:  =====\n");
+    printf("1. Minggu Pertama\n");
+    printf("2. Minggu Kedua\n");
+    printf("3. Minggu Ketiga\n");
+    printf("4. Minggu Keempat\n");
+    printf("0. Kembali Ke Menu User\n");
+    scanf("%d", &minggu);
+
+    if (minggu == 0) {
+      clearScreen();
+      break; // Kembali ke menu bensin
+    }
+
+    if (minggu < 1 || minggu > 4) {
+      printf("Minggu tidak valid. Silakan pilih lagi.\n");
+      continue; // Ketika tidak memasukkan minggu yang valid
+    }
+
+    printf("\n===== Minggu %d =====\n", minggu);
+    clearScreen();
+
+    for (hari = 0; hari < 7; ++hari) {
+      printf("\n===== Hari %d =====\n", hari + 1);
+
+      continueInput = 1;
+
+      while (continueInput) {
+        float uangBensin;
+        printf("Masukkan jumlah uang penjualan Bensin: ");
+        scanf("%f", &uangBensin);
+
+        int dataIndex = hari + (minggu - 1) * 7;
+        float literTerjual = uangBensin / hargaBensin;
+
+        if (literTerjual > stokBensin[minggu - 1]) {
+          printf("Maaf, stok bensin tidak mencukupi untuk jumlah yang dimasukkan.\n");
+            sleep(2);
+            clearScreen();
+          return -1;
+        }
+
+        literBensin[dataIndex] += literTerjual;
+        harianPendapatan[dataIndex] += uangBensin;
+        pendapatanMingguan += uangBensin;
+        totalLiterTerjual += literBensin[dataIndex];
+
+        // Display remaining fuel stock
+        stokBensin[minggu - 1] -= literTerjual;
+        printf("Hari ke - %d\n", hari + 1);
+        printf("Jumlah %s yang Terjual: %.2f liter\n", jenisBensin, literBensin[dataIndex]);
+        printf("Sisa Stok Bensin: %.2f liter\n", stokBensin[minggu - 1]);
+        printf("Jumlah Penjualan Harian: Rp %.2f\n",  literBensin[dataIndex] * hargaBensin);
+
+        printf("Pilih tindakan:\n");
+        printf("1. Lanjut\n");
+        printf("2. Ganti hari\n");
+        printf("0. Kembali ke menu minggu\n");
+        scanf("%d", &continueInput);
+
+        if (continueInput == 0 || continueInput == 2) {
+          clearScreen();
+          break; // Kembali ke menu minggu atau ganti hari
+        }
+      }
+
+      if (continueInput == 0) {
+        break; // Keluar dari dalam menu pemasukkan harian lalu kembali ke menu
+               // memilih minggu
+      }
+    }
+
+    mingguanPendapatan[minggu - 1] += pendapatanMingguan;
+
+    printf("\nTerima kasih, telah melaporkan data Bensin untuk Minggu %d.\n",
+           minggu);
+    sleep(2);
+    clearScreen();
+  }
+}
+
+void displayBensin(struct Akun *user, float *literBensin, float hargaBensin, const char *jenisBensin, float *stokBensin) {
+  printf("Menampilkan Seluruh Data %s untuk User: %s\n", jenisBensin, user->username);
+
+  for (int minggu = 0; minggu < 4; ++minggu) {
+    printf("\n===== Minggu %d =====\n", minggu + 1);
+
+    // Inisialisasi total pendapatan mingguan
+    float totalPendapatanMingguan = 0.0;
+    float totalLiterTerjual = 0.0;
+    float sisaStokBensin = 0.0;
+    int dataExist = 0; // Flag untuk menandakan apakah ada data penjualan
+
+    for (int hari = 0; hari < 7; ++hari) {
+      int dataIndex = hari + minggu * 7;
+
+      // Hanya tampilkan data yang telah diisi oleh pengguna
+      if (literBensin[dataIndex] > 0) {
+        totalLiterTerjual += literBensin[dataIndex];
+        sisaStokBensin = literBensin[dataIndex];
+        totalPendapatanMingguan += literBensin[dataIndex] * hargaBensin;
+
+        printf("Hari ke-%d - Jumlah Liter %s yang Terjual: %.2f liter, Jumlah Penjualan Harian: Rp %.2f\n",
+               hari + 1, jenisBensin, literBensin[dataIndex], literBensin[dataIndex] * hargaBensin);
+
+        // Tampilkan jumlah liter yang terjual tepat di atas sisa stok bensin
+        printf("Sisa Stok Bensin: %.2f liter\n" , *stokBensin);
+
+        dataExist = 1; // Set flag bahwa ada data penjualan
+      }
+    }
+
+    // Tampilkan pesan jika tidak ada data penjualan untuk minggu tertentu
+    if (!dataExist) {
+      printf("Tidak ada data penjualan untuk minggu ke-%d.\n", minggu + 1);
+    } else {
+      printf("Total Liter Terjual minggu ke-%d: %.2f liter\n", minggu + 1, totalLiterTerjual);
+      printf("Total Pendapatan minggu ke-%d: Rp %.2f\n", minggu + 1, totalPendapatanMingguan);
+    }
+  }
+}
+
 void menuAdmin(struct Akun adminUser, struct Akun users[]) {
     int adminChoice;
     while (1) {
