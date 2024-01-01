@@ -285,6 +285,62 @@ void displayBensin(struct Akun *user, float *literBensin, float hargaBensin, con
     }
   }
 }
+void viewUserList() {
+    printf("=== Daftar Pengguna ===\n");
+    for (int i = 1; i < userCount; ++i) {
+        printf("%d. %s", i, users[i].username);
+
+        // Check if the user is signed in
+        if (users[i].jenisUser == 1) {
+            printf(" (Sudah Sign In)");
+        } else {
+            printf(" (Belum Sign In)");
+        }
+
+        // Display the type of fuel the user is managing
+        if (users[i].chosenFuelType == PERTALITE) {
+            printf(" - Mengelola Pertalite");
+        } else if (users[i].chosenFuelType == PERTAMAX) {
+            printf(" - Mengelola Pertamax");
+        } else if (users[i].chosenFuelType == SOLAR) {
+            printf(" - Mengelola Solar");
+        }
+
+        printf("\n");
+    }
+    printf("=======================\n");
+}
+
+void viewAllData(struct Akun adminUser) {
+  int userChoice;
+  printf("=== Melihat Seluruh Data ===\n");
+  printf("1. Data User 1\n");
+  printf("2. Data User 2\n");
+  printf("3. Data User 3\n");
+  printf("0. Kembali ke Menu Admin\n");
+  printf("Pilih user (1-3): ");
+  scanf("%d", &userChoice);
+
+  switch (userChoice) {
+  case 1:
+    clearScreen();
+    displayBensin(&adminUser, literPertalite, HARGA_PERTALITE, "Pertalite", stokPertalite);
+    break;
+  case 2:
+    clearScreen();
+    displayBensin(&adminUser, literPertamax, HARGA_PERTAMAX, "Pertamax", stokPertamax);
+    break;
+  case 3:
+    clearScreen();
+    displayBensin(&adminUser, literSolar, HARGA_SOLAR, "Solar", stokSolar);
+    break;
+  case 0:
+    printf("Kembali ke Menu Admin.\n");
+    break;
+  default:
+    printf("Pilihan user tidak valid.\n");
+  }
+}
 void menuAdmin(struct Akun adminUser, struct Akun users[]) {
     int adminChoice;
     while (1) {
