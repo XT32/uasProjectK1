@@ -155,7 +155,6 @@ int handleSignInFailure(struct Akun users[], int userCount) {
   printf("Username atau password salah.\n");
   return -1; // Kembalikan -1 jika login gagal
 }
-
 void dataBensin(struct Akun *user, float *literBensin, float hargaBensin, float *stokBensin, const char *jenisBensin){
   int continueInput = 1;
   int hari;
@@ -286,7 +285,6 @@ void displayBensin(struct Akun *user, float *literBensin, float hargaBensin, con
     }
   }
 }
-
 void menuAdmin(struct Akun adminUser, struct Akun users[]) {
     int adminChoice;
     while (1) {
