@@ -440,3 +440,121 @@ users[3].chosenFuelType = SOLAR;
 
   return 0;
 }
+
+
+
+#include <stdio.h>
+
+#define MAX_DAYS 7
+#define NUM_USERS 3
+#define NUM_FUEL_TYPES 3
+
+void inputData(int user, int fuelType, int tankBefore[][NUM_FUEL_TYPES][MAX_DAYS], int tankAfter[][NUM_FUEL_TYPES][MAX_DAYS]) {
+    int day;
+    printf("Masukkan data tangki bensin:\n");
+
+    for (day = 0; day < MAX_DAYS; day++) {
+        printf("Hari ke-%d:\n", day + 1);
+        printf("Tangki sebelum isi: ");
+        scanf("%d", &tankBefore[user][fuelType][day]);
+        printf("Tangki sesudah isi: ");
+        scanf("%d", &tankAfter[user][fuelType][day]);
+    }
+}
+
+void viewData(int user, int fuelType, int tankBefore[][NUM_FUEL_TYPES][MAX_DAYS], int tankAfter[][NUM_FUEL_TYPES][MAX_DAYS]) {
+    int day;
+    const char *fuelNames[] = {"Pertamax", "Pertalite", "Solar"};
+
+    printf("Data tangki bensin untuk User %d, Jenis Bensin %s:\n", user + 1, fuelNames[fuelType]);
+
+    for (day = 0; day < MAX_DAYS; day++) {
+        printf("Hari ke-%d:\n", day + 1);
+        printf("Tangki sebelum isi: %d\n", tankBefore[user][fuelType][day]);
+        printf("Tangki sesudah isi: %d\n", tankAfter[user][fuelType][day]);
+    }
+}
+
+int main() {
+    int tankBefore[NUM_USERS][NUM_FUEL_TYPES][MAX_DAYS];
+    int tankAfter[NUM_USERS][NUM_FUEL_TYPES][MAX_DAYS];
+    int user, fuelType, choice;
+
+    for (user = 0; user < NUM_USERS; user++) {
+        for (fuelType = 0; fuelType < NUM_FUEL_TYPES; fuelType++) {
+            for (int day = 0; day < MAX_DAYS; day++) {
+                tankBefore[user][fuelType][day] = 0;
+                tankAfter[user][fuelType][day] = 0;
+            }
+        }
+    }
+
+    do {
+        printf("\nMenu:\n");
+        printf("1. Input Data\n");
+        printf("2. View Data\n");
+        printf("3. Keluar\n");
+        printf("Pilih: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("\nInput Data:\n");
+                printf("Masukkan nomor user (1-3): ");
+                scanf("%d", &user);
+
+                if (user >= 1 && user <= NUM_USERS) {
+                    printf("Masukkan jenis bensin (1-3):\n");
+                    printf("1. Pertamax\n");
+                    printf("2. Pertalite\n");
+                    printf("3. Solar\n");
+                    scanf("%d", &fuelType);
+
+                    if (fuelType >= 1 && fuelType <= NUM_FUEL_TYPES) {
+                        // Memeriksa hak akses user
+                        if ((user == 1 && fuelType == 1) || (user == 2 && fuelType == 2) || (user == 3 && fuelType == 3)) {
+                            inputData(user - 1, fuelType - 1, tankBefore, tankAfter);
+                        } else {
+                            printf("Hak akses tidak valid untuk jenis bensin tersebut.\n");
+                        }
+                    } else {
+                        printf("Jenis bensin tidak valid.\n");
+                    }
+                } else {
+                    printf("Nomor user tidak valid.\n");
+                }
+                break;
+
+            case 2:
+                printf("\nView Data:\n");
+                printf("Masukkan nomor user (1-3): ");
+                scanf("%d", &user);
+
+                if (user >= 1 && user <= NUM_USERS) {
+                    printf("Masukkan jenis bensin (1-3):\n");
+                    printf("1. Pertamax\n");
+                    printf("2. Pertalite\n");
+                    printf("3. Solar\n");
+                    scanf("%d", &fuelType);
+
+                    if (fuelType >= 1 && fuelType <= NUM_FUEL_TYPES) {
+                        viewData(user - 1, fuelType - 1, tankBefore, tankAfter);
+                    } else {
+                        printf("Jenis bensin tidak valid.\n");
+                    }
+                } else {
+                    printf("Nomor user tidak valid.\n");
+                }
+                break;
+
+            case 3:
+                printf("Keluar dari program.\n");
+                break;
+
+            default:
+                printf("Pilihan tidak valid. Silakan coba lagi.\n");
+        }
+    } while (choice != 3);
+
+    return 0;
+}
